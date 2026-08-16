@@ -6,6 +6,7 @@ module.exports = async (req, res) => {
     const { state } = await readState();
     return send(res, 200, state);
   } catch (error) {
+    console.error(error.message);
     return send(res, 500, { error: 'state unavailable' });
   }
 };

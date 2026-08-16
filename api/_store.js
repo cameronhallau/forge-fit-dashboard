@@ -5,7 +5,8 @@ const ROW_ID = 'challenge';
 function config() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error('Supabase is not configured');
+  if (!url) throw new Error('SUPABASE_URL is not configured');
+  if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY is not configured');
   return { url: url.replace(/\/$/, ''), key };
 }
 function headers(key) {
@@ -30,7 +31,7 @@ function hydrate(state) {
 async function readState() {
   const { url, key } = config();
   const response = await fetch(`${url}/rest/v1/app_state?id=eq.${ROW_ID}&select=state`, { headers: headers(key) });
-  if (!response.ok) throw new Error('Could not read challenge state');
+  if (!response.ok) throw new Error(`Could not read challenge state (${response.status})`);
   const rows = await response.json();
   return { exists: rows.length > 0, state: hydrate(rows[0]?.state) };
 }
@@ -41,7 +42,7 @@ async function writeState(state, exists) {
   const body = JSON.stringify({ id: ROW_ID, state: hydrate(state) });
   const endpoint = exists ? `${url}/rest/v1/app_state?id=eq.${ROW_ID}` : `${url}/rest/v1/app_state`;
   const response = await fetch(endpoint, { method: exists ? 'PATCH' : 'POST', headers: { ...headers(key), Prefer: 'return=minimal' }, body });
-  if (!response.ok) throw new Error('Could not save challenge state');
+  if (!response.ok) throw new Error(`Could not save challenge state (${response.status})`);
 }
 
 function send(res, status, payload) {

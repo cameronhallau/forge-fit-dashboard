@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
     await writeState(state, exists);
     return send(res, 200, { ok: true });
   } catch (error) {
+    console.error(error.message);
     return send(res, 500, { error: 'save unavailable' });
   }
 };
