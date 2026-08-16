@@ -56,8 +56,10 @@ async function loadState() {
 }
 async function savePerson() {
   localStorage.setItem('forge-fallback', JSON.stringify(state));
-  const response = await fetch('/api/participant', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: activeId, participant: person() }) });
-  if (!response.ok) throw new Error('Save failed');
+  try {
+    const response = await fetch('/api/participant', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: activeId, participant: person() }) });
+    return response.ok;
+  } catch { return false; }
 }
 
 function challengeWeek(participant, date = todayKey()) {
@@ -207,11 +209,11 @@ async function submitSetup(event) {
   if (type === 'run') selected.challenge.run.distance = Number($('setupRunDistanceInput').value) || 5;
   const mode = document.querySelector('[name="sessionDefinition"]:checked')?.value || 'health';
   selected.sessionDefinition = { mode, custom: $('customSessionInput').value.trim() };
-  try { await savePerson(); toast('CHALLENGE SET'); renderDashboard(); setView('dashboard'); } catch { toast('SAVE FAILED — TRY AGAIN'); }
+  const shared = await savePerson(); toast(shared ? 'CHALLENGE SET' : 'SAVED ON THIS DEVICE'); renderDashboard(); setView('dashboard');
 }
 async function submitEntry(event) {
   event.preventDefault(); const p = person(); p.days[entryDate] = Object.fromEntries(DAY_FIELDS.map(key => [key, $(`${key}Input`).checked]));
-  try { await savePerson(); toast(`${entryDate} SAVED`); renderDashboard(); loadEntry(); } catch { toast('SAVE FAILED — TRY AGAIN'); }
+  const shared = await savePerson(); toast(shared ? `${entryDate} SAVED` : 'SAVED ON THIS DEVICE'); renderDashboard(); loadEntry();
 }
 async function submitBaseline(event) {
   event.preventDefault(); const p = person(), c = p.challenge, week = challengeWeek(p), retest = baselineMode !== 'edit' && week >= 8;
@@ -225,7 +227,7 @@ async function submitBaseline(event) {
     c.bodyweight = Number($('bodyweightInput').value) || 0; ['squat', 'bench', 'deadlift'].forEach(lift => { c.strength[lift].baseline = Number($(`${lift}BaselineInput`).value) || 0; });
     if (!baselineComplete(p)) return toast('COMPLETE YOUR BASELINE');
   } else { c.run.distance = Number($('runDistanceInput').value) || 0; c.run.baselinePace = parsePace($('runBaselineInput').value); if (!baselineComplete(p)) return toast('ADD DISTANCE AND PACE'); }
-  try { await savePerson(); toast(retest ? 'FINAL RE-TEST SAVED' : baselineMode === 'edit' ? 'BASELINE UPDATED' : 'BASELINE SAVED'); baselineMode = 'auto'; renderDashboard(); setView('dashboard'); } catch { toast('SAVE FAILED — TRY AGAIN'); }
+  const shared = await savePerson(); toast(shared ? (retest ? 'FINAL RE-TEST SAVED' : baselineMode === 'edit' ? 'BASELINE UPDATED' : 'BASELINE SAVED') : 'SAVED ON THIS DEVICE'); baselineMode = 'auto'; renderDashboard(); setView('dashboard');
 }
 function toast(message) { $('toast').textContent = message; $('toast').classList.add('show'); clearTimeout(saveTimer); saveTimer = setTimeout(() => $('toast').classList.remove('show'), 1800); }
 
