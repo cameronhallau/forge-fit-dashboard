@@ -37,7 +37,8 @@ async function readState() {
 
 async function writeState(state, exists) {
   const { url, key } = config();
-  const body = JSON.stringify({ id: ROW_ID, state: hydrate(state), updated_at: new Date().toISOString() });
+  // Keep the table deliberately tiny: its schema is just id + jsonb state.
+  const body = JSON.stringify({ id: ROW_ID, state: hydrate(state) });
   const endpoint = exists ? `${url}/rest/v1/app_state?id=eq.${ROW_ID}` : `${url}/rest/v1/app_state`;
   const response = await fetch(endpoint, { method: exists ? 'PATCH' : 'POST', headers: { ...headers(key), Prefer: 'return=minimal' }, body });
   if (!response.ok) throw new Error('Could not save challenge state');

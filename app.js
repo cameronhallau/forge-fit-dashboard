@@ -51,11 +51,16 @@ async function loadState() {
     const response = await fetch('/api/state', { cache: 'no-store' });
     if (!response.ok) throw new Error();
     state = normalize(await response.json());
-  } catch { state = normalize(JSON.parse(localStorage.getItem('forge-fallback') || '{}')); }
+  } catch {
+    // Scores only exist in the shared challenge store. Never fall back to a
+    // browser copy: that would create a private, misleading leaderboard.
+    state = normalize();
+    activeId = null;
+    toast('CENTRAL SCOREBOARD UNAVAILABLE');
+  }
   showLanding();
 }
 async function savePerson() {
-  localStorage.setItem('forge-fallback', JSON.stringify(state));
   try {
     const response = await fetch('/api/participant', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: activeId, participant: person() }) });
     return response.ok;
@@ -204,30 +209,38 @@ async function submitSetup(event) {
   event.preventDefault();
   const type = document.querySelector('[name="challengeType"]:checked')?.value;
   if (!type) return toast('CHOOSE A CHALLENGE TYPE');
+  const previous = structuredClone(state);
   const selected = person();
   selected.startDate = CHALLENGE_START; selected.setupComplete = true; selected.challenge.type = type;
   if (type === 'run') selected.challenge.run.distance = Number($('setupRunDistanceInput').value) || 5;
   const mode = document.querySelector('[name="sessionDefinition"]:checked')?.value || 'health';
   selected.sessionDefinition = { mode, custom: $('customSessionInput').value.trim() };
-  const shared = await savePerson(); toast(shared ? 'CHALLENGE SET' : 'SAVED ON THIS DEVICE'); renderDashboard(); setView('dashboard');
+  const shared = await savePerson();
+  if (!shared) { state = previous; return toast('CENTRAL SAVE FAILED — TRY AGAIN'); }
+  toast('CHALLENGE SET'); renderDashboard(); setView('dashboard');
 }
 async function submitEntry(event) {
-  event.preventDefault(); const p = person(); p.days[entryDate] = Object.fromEntries(DAY_FIELDS.map(key => [key, $(`${key}Input`).checked]));
-  const shared = await savePerson(); toast(shared ? `${entryDate} SAVED` : 'SAVED ON THIS DEVICE'); renderDashboard(); loadEntry();
+  event.preventDefault(); const previous = structuredClone(state), p = person(); p.days[entryDate] = Object.fromEntries(DAY_FIELDS.map(key => [key, $(`${key}Input`).checked]));
+  const shared = await savePerson();
+  if (!shared) { state = previous; loadEntry(); return toast('CENTRAL SAVE FAILED — TRY AGAIN'); }
+  toast(`${entryDate} SAVED`); renderDashboard(); loadEntry();
 }
 async function submitBaseline(event) {
   event.preventDefault(); const p = person(), c = p.challenge, week = challengeWeek(p), retest = baselineMode !== 'edit' && week >= 8;
   if (!retest && baselineMode !== 'edit' && week !== 1) return toast('BASELINE IS AVAILABLE IN WEEK ONE');
+  const previous = structuredClone(state);
   if (retest) {
     if (c.type === 'strength') ['squat', 'bench', 'deadlift'].forEach(lift => { c.strength[lift].retest = Number($(`${lift}RetestInput`).value) || 0; });
     else c.run.retestPace = parsePace($('runRetestInput').value);
-    if (!retestComplete(p)) return toast('COMPLETE THE FINAL RE-TEST');
+    if (!retestComplete(p)) { state = previous; return toast('COMPLETE THE FINAL RE-TEST'); }
     c.retestDate = todayKey();
   } else if (c.type === 'strength') {
     c.bodyweight = Number($('bodyweightInput').value) || 0; ['squat', 'bench', 'deadlift'].forEach(lift => { c.strength[lift].baseline = Number($(`${lift}BaselineInput`).value) || 0; });
-    if (!baselineComplete(p)) return toast('COMPLETE YOUR BASELINE');
-  } else { c.run.distance = Number($('runDistanceInput').value) || 0; c.run.baselinePace = parsePace($('runBaselineInput').value); if (!baselineComplete(p)) return toast('ADD DISTANCE AND PACE'); }
-  const shared = await savePerson(); toast(shared ? (retest ? 'FINAL RE-TEST SAVED' : baselineMode === 'edit' ? 'BASELINE UPDATED' : 'BASELINE SAVED') : 'SAVED ON THIS DEVICE'); baselineMode = 'auto'; renderDashboard(); setView('dashboard');
+    if (!baselineComplete(p)) { state = previous; return toast('COMPLETE YOUR BASELINE'); }
+  } else { c.run.distance = Number($('runDistanceInput').value) || 0; c.run.baselinePace = parsePace($('runBaselineInput').value); if (!baselineComplete(p)) { state = previous; return toast('ADD DISTANCE AND PACE'); } }
+  const shared = await savePerson();
+  if (!shared) { state = previous; return toast('CENTRAL SAVE FAILED — TRY AGAIN'); }
+  toast(retest ? 'FINAL RE-TEST SAVED' : baselineMode === 'edit' ? 'BASELINE UPDATED' : 'BASELINE SAVED'); baselineMode = 'auto'; renderDashboard(); setView('dashboard');
 }
 function toast(message) { $('toast').textContent = message; $('toast').classList.add('show'); clearTimeout(saveTimer); saveTimer = setTimeout(() => $('toast').classList.remove('show'), 1800); }
 
