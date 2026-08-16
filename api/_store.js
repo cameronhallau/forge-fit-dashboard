@@ -10,7 +10,9 @@ function config() {
   return { url: url.replace(/\/$/, ''), key };
 }
 function headers(key) {
-  return { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
+  // Supabase's current sb_secret keys are API keys, not JWTs. They must be
+  // supplied as `apikey` only (legacy service_role JWTs work here too).
+  return { apikey: key, 'Content-Type': 'application/json' };
 }
 function defaultState() {
   return { version: 7, participants: {} };
