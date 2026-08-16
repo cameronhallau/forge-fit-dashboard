@@ -1,0 +1,12 @@
+[Unit]
+Description=Forge Fitness Dashboard
+After=network.target tailscaled.service
+
+[Service]
+WorkingDirectory=/opt/forge-fit
+ExecStart=/usr/bin/python3 /opt/forge-fit/server.py --host 0.0.0.0 --port 8888 --data /opt/forge-fit/data/state.json
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

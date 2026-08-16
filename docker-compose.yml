@@ -1,0 +1,7 @@
+services:
+  forge-fit:
+    build: .
+    container_name: forge-fit
+    restart: unless-stopped
+    ports:
+      - "8888:80"

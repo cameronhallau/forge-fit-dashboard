@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ede8dc" />
+  <title>8 Week Challenge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260816-readable" />
+</head>
+<body>
+  <main class="shell">
+    <section id="landing" class="view">
+      <header class="page-head landing-head"><h2>SELECT PLAYER</h2></header>
+      <div class="landing-people" aria-label="Select your name">
+        <button type="button" data-person="ca">CA</button><button type="button" data-person="p">P</button><button type="button" data-person="g">G</button><button type="button" data-person="cl">CL</button>
+      </div>
+      <button class="text-button rules-link" type="button" data-view="rules">RULES &amp; POINTS</button>
+    </section>
+
+    <section id="rules" class="view">
+      <header class="page-head"><button class="back" type="button" data-view="landing">← SELECT PLAYER</button><h2>RULES &amp;<br>POINTS</h2></header>
+      <section class="rules-card">
+        <h3>THE CHALLENGE</h3>
+        <p>Eight weeks. Individual PvP. Log activities as completed or not completed. The leaderboard can be viewed by week or across the full challenge.</p>
+      </section>
+      <section class="rules-card">
+        <h3>WAYS TO SCORE</h3>
+        <div class="rule-row"><b>+1</b><span>Each class / gym workout</span></div>
+        <div class="rule-row"><b>+1</b><span>Each run</span></div>
+        <div class="rule-row"><b>+1</b><span>Recovery (compression boots or sauna) <small>Maximum: 2 points each week</small></span></div>
+        <div class="rule-row"><b>+1</b><span>Weekly challenge session <small>Maximum: 1 point each week</small></span></div>
+        <div class="rule-row"><b>+1</b><span>Complete every active daily habit that day</span></div>
+      </section>
+      <section class="rules-card">
+        <h3>DAILY HABIT STACK</h3>
+        <div class="stack-row"><b>WEEKS 1–2</b><span>10,000 steps</span></div>
+        <div class="stack-row"><b>WEEK 3</b><span>Steps + protein goal</span></div>
+        <div class="stack-row"><b>WEEK 4</b><span>Steps + protein goal + water goal</span></div>
+        <div class="stack-row"><b>WEEKS 5–8</b><span>Steps + protein goal + water goal + 10 min mobility</span></div>
+        <p class="rule-note">You can log all habits at any time. The daily habit point only applies once that habit has joined the stack.</p>
+      </section>
+      <section class="rules-card split-rules">
+        <div><h3>LIFTERS</h3><p>Set bodyweight plus squat, bench and deadlift in Week 1. Re-test in Week 8.</p><strong>15 + BONUS POINTS</strong><p class="rule-note">Any improvement earns +15, plus relative-strength improvement × 20, rounded to a whole point: ((new total ÷ bodyweight) − (baseline total ÷ bodyweight)) × 20. No cap.</p></div>
+        <div><h3>RUNNERS</h3><p>Set a target distance and baseline pace in Week 1. Re-test the same distance in Week 8.</p><strong>15 + BONUS POINTS</strong><p class="rule-note">Any faster pace earns +15, plus one point per whole second/km faster than baseline. Example: 10 sec/km faster = 25 points. No cap.</p></div>
+      </section>
+    </section>
+
+    <section id="dashboard" class="view">
+      <section class="score-strip" aria-label="Your points"><article><span>TODAY</span><b id="todayPoints">0</b><small>POINTS</small></article><article><span>THIS WEEK</span><b id="weekPoints">0</b><small>POINTS</small></article></section>
+      <section class="chart-section"><div class="section-head"><b>WEEKLY PROGRESS</b><span id="weekLabel">WEEK —</span></div><div class="line-card"><svg id="weeklyLine" viewBox="0 0 700 180" role="img" aria-label="Daily points for this week"></svg><div id="lineLabels" class="line-labels"></div></div></section>
+      <section class="leaderboard-section"><div class="section-head"><b>LEADERBOARD</b><div class="segment" role="group" aria-label="Leaderboard period"><button id="leaderWeek" class="active" type="button">WEEK</button><button id="leaderOverall" type="button">OVERALL</button></div></div><div id="leaderboardBars" class="leaderboard-bars"></div></section>
+      <button id="baselineButton" class="baseline-button" type="button" hidden>SET YOUR BASELINE <span>→</span></button>
+      <button class="primary-button" type="button" data-view="update">LOG ACTIVITY <span>→</span></button>
+      <button id="switchPlayer" class="text-button" type="button">CHANGE PLAYER</button>
+      <button id="editBaseline" class="text-button" type="button">EDIT BASELINE</button>
+    </section>
+
+    <section id="update" class="view">
+      <header class="page-head"><button class="back" type="button" data-view="dashboard">← DASHBOARD</button><p>LOG ACTIVITY / <span id="entryPerson">—</span></p></header>
+      <section class="date-editor" aria-label="Entry date"><button id="datePrev" type="button" aria-label="Previous day">←</button><label><span>DATE</span><input id="entryDate" type="date"></label><button id="dateNext" type="button" aria-label="Next day">→</button><button id="dateToday" type="button">TODAY</button></section>
+      <form id="entryForm">
+        <section class="entry-group"><div class="section-head"><b>DAILY HABITS</b><span>ONE TAP</span></div><div class="toggle-grid habits">
+          <label><input id="stepsInput" type="checkbox"><span><b>STEPS</b><small>10K MET</small><i>✓</i></span></label><label><input id="waterInput" type="checkbox"><span><b>WATER</b><small>2L MET</small><i>✓</i></span></label><label><input id="proteinInput" type="checkbox"><span><b>PROTEIN GOAL</b><small>MET</small><i>✓</i></span></label><label><input id="mobilityInput" type="checkbox"><span><b>MOBILITY</b><small>10 MINUTES</small><i>✓</i></span></label>
+        </div><p id="habitStackNote" class="stack-note"></p></section>
+        <section class="entry-group"><div class="section-head"><b>ACTIVITY</b><span>ONE TAP</span></div><div class="toggle-grid sessions">
+          <label><input id="gymInput" type="checkbox"><span><b>CLASS / GYM</b><small>DONE</small><i>✓</i></span></label><label><input id="runInput" type="checkbox"><span><b>RUN</b><small>DONE</small><i>✓</i></span></label><label><input id="recoveryInput" type="checkbox"><span><b>RECOVERY</b><small>DONE · MAX 2/WK</small><i>✓</i></span></label><label><input id="challengeSessionInput" type="checkbox"><span><b>CHALLENGE SESSION</b><small id="challengeSessionEntryLabel">DONE · MAX 1/WK</small><i>✓</i></span></label>
+        </div></section>
+        <button class="primary-button save-button" type="submit">SAVE DAY <span>→</span></button>
+      </form>
+    </section>
+
+    <section id="baseline" class="view">
+      <header class="page-head"><button class="back" type="button" data-view="dashboard">← DASHBOARD</button><p>WEEK 1 / <span id="baselinePerson">—</span></p><h2>SET BASELINE</h2></header>
+      <form id="baselineForm" class="baseline-form">
+        <div id="baselineStrength" hidden><p class="form-note">Record your first-week test. Week 8: any improvement earns +15, plus relative-strength improvement × 20. No cap.</p><label class="full-field">BODYWEIGHT <span><input id="bodyweightInput" type="number" min="1" step="0.1" inputmode="decimal"> KG</span></label><div class="field-grid"><label>SQUAT <input id="squatBaselineInput" type="number" min="0" step="0.5" inputmode="decimal"></label><label>BENCH <input id="benchBaselineInput" type="number" min="0" step="0.5" inputmode="decimal"></label><label>DEADLIFT <input id="deadliftBaselineInput" type="number" min="0" step="0.5" inputmode="decimal"></label></div></div>
+        <div id="baselineRun" hidden><p class="form-note">Record your first-week pace at your chosen target distance. Week 8: any faster pace earns +15, plus one point per second/km faster. No cap.</p><label class="full-field">TARGET DISTANCE <span><input id="runDistanceInput" type="number" min="0.1" step="0.1" inputmode="decimal"> KM</span></label><label class="full-field">BASELINE PACE <input id="runBaselineInput" type="text" inputmode="numeric" placeholder="05:30"></label></div>
+        <div id="retestStrength" hidden><p class="form-note">Final re-test: +15 for any improvement, plus relative-strength improvement × 20. No cap.</p><div class="field-grid"><label>SQUAT <input id="squatRetestInput" type="number" min="0" step="0.5" inputmode="decimal"></label><label>BENCH <input id="benchRetestInput" type="number" min="0" step="0.5" inputmode="decimal"></label><label>DEADLIFT <input id="deadliftRetestInput" type="number" min="0" step="0.5" inputmode="decimal"></label></div></div>
+        <div id="retestRun" hidden><p class="form-note">Final re-test: +15 for any faster pace, plus one point per whole second/km faster. No cap.</p><label class="full-field">FINAL PACE <input id="runRetestInput" type="text" inputmode="numeric" placeholder="05:10"></label></div>
+        <p id="baselineStatus" class="stack-note"></p><button class="primary-button" type="submit">SAVE BASELINE <span>→</span></button>
+      </form>
+    </section>
+
+    <section id="setup" class="view">
+      <header class="page-head setup-head"><button class="back" type="button" data-view="landing">← CHANGE PERSON</button><p>CHALLENGE SETUP</p><h2>SET UP<br><span id="setupName">—</span></h2></header>
+      <form id="setupForm">
+        <section class="setup-group"><div class="section-head"><b>CHALLENGE TYPE</b><span>LOCKS AFTER START</span></div><div class="choice-grid"><label><input type="radio" name="challengeType" value="strength"><span><b>STRENGTH</b><small>+15 + CALCULATED BONUS</small></span></label><label><input type="radio" name="challengeType" value="run"><span><b>RUNNING</b><small>+15 + 1 PT / SEC-KM</small></span></label></div><label id="setupDistanceWrap" class="full-field" hidden>TARGET RUN DISTANCE <span><input id="setupRunDistanceInput" type="number" min="0.1" step="0.1" inputmode="decimal"> KM</span></label></section>
+        <section class="setup-group"><div class="section-head"><b>WEEKLY CHALLENGE SESSION</b><span>MAX 1 POINT / WEEK</span></div><div class="session-choice"><label><input type="radio" name="sessionDefinition" value="health"><span><b>HEALTH CONTENT</b><small>40 MINUTES</small></span></label><label><input type="radio" name="sessionDefinition" value="reading"><span><b>READING</b><small>60 MINUTES</small></span></label><label><input type="radio" name="sessionDefinition" value="mealPrep"><span><b>MEAL PREP</b><small>DONE</small></span></label><label><input type="radio" name="sessionDefinition" value="custom"><span><b>DEFINE MY OWN</b><small>CUSTOM</small></span></label></div><label id="customSessionWrap" class="full-field" hidden>MY DEFINITION <input id="customSessionInput" type="text" maxlength="80" placeholder="e.g. 45 min meal prep"></label></section>
+        <p class="lock-note">Your test type and session definition are set here once. Add your numeric baseline separately any time in week one.</p><button class="primary-button" type="submit">START MY CHALLENGE <span>→</span></button>
+      </form>
+    </section>
+  </main>
+  <nav class="bottom-nav" aria-label="Primary navigation"><button class="nav-item" type="button" data-view="dashboard"><span>▦</span>DASHBOARD</button><button class="nav-item" type="button" data-view="update"><span>＋</span>LOG</button></nav>
+  <div id="toast" role="status"></div><script src="app.js?v=20260816-edit-baseline"></script>
+</body>
+</html>
