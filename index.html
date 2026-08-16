@@ -55,7 +55,8 @@
       <button id="baselineButton" class="baseline-button" type="button" hidden>SET YOUR BASELINE <span>→</span></button>
       <button class="primary-button" type="button" data-view="update">LOG ACTIVITY <span>→</span></button>
       <button id="switchPlayer" class="text-button" type="button">CHANGE PLAYER</button>
-      <button id="editBaseline" class="text-button" type="button">EDIT BASELINE</button>
+      <button id="editBaseline" class="text-button" type="button">SET BASELINE</button>
+      <button id="myProfile" class="text-button" type="button">MY PROFILE</button>
     </section>
 
     <section id="update" class="view">
@@ -84,7 +85,7 @@
     </section>
 
     <section id="setup" class="view">
-      <header class="page-head setup-head"><button class="back" type="button" data-view="landing">← CHANGE PERSON</button><p>CHALLENGE SETUP</p><h2>SET UP<br><span id="setupName">—</span></h2></header>
+      <header class="page-head setup-head"><button class="back" type="button" data-view="landing">← CHANGE PERSON</button><p>MY PROFILE</p><h2>SET UP<br><span id="setupName">—</span></h2></header>
       <form id="setupForm">
         <section class="setup-group"><div class="section-head"><b>CHALLENGE TYPE</b><span>LOCKS AFTER START</span></div><div class="choice-grid"><label><input type="radio" name="challengeType" value="strength"><span><b>STRENGTH</b><small>+15 + CALCULATED BONUS</small></span></label><label><input type="radio" name="challengeType" value="run"><span><b>RUNNING</b><small>+15 + 1 PT / SEC-KM</small></span></label></div><label id="setupDistanceWrap" class="full-field" hidden>TARGET RUN DISTANCE <span><input id="setupRunDistanceInput" type="number" min="0.1" step="0.1" inputmode="decimal"> KM</span></label></section>
         <section class="setup-group"><div class="section-head"><b>WEEKLY CHALLENGE SESSION</b><span>MAX 1 POINT / WEEK</span></div><div class="session-choice"><label><input type="radio" name="sessionDefinition" value="health"><span><b>HEALTH CONTENT</b><small>40 MINUTES</small></span></label><label><input type="radio" name="sessionDefinition" value="reading"><span><b>READING</b><small>60 MINUTES</small></span></label><label><input type="radio" name="sessionDefinition" value="mealPrep"><span><b>MEAL PREP</b><small>DONE</small></span></label><label><input type="radio" name="sessionDefinition" value="custom"><span><b>DEFINE MY OWN</b><small>CUSTOM</small></span></label></div><label id="customSessionWrap" class="full-field" hidden>MY DEFINITION <input id="customSessionInput" type="text" maxlength="80" placeholder="e.g. 45 min meal prep"></label></section>
@@ -93,6 +94,6 @@
     </section>
   </main>
   <nav class="bottom-nav" aria-label="Primary navigation"><button class="nav-item" type="button" data-view="dashboard"><span>▦</span>DASHBOARD</button><button class="nav-item" type="button" data-view="update"><span>＋</span>LOG</button></nav>
-  <div id="toast" role="status"></div><script src="app.js?v=20260816-local-fallback"></script>
+  <div id="toast" role="status"></div><script src="app.js?v=20260816-my-profile"></script>
 </body>
 </html>
