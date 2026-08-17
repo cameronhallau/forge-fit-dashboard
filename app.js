@@ -3,9 +3,9 @@ const CHALLENGE_START = '2026-08-17';
 const DAY_FIELDS = ['steps', 'water', 'protein', 'mobility', 'gym', 'run', 'recovery', 'challengeSession'];
 const HABITS = [
   { key: 'steps', label: 'STEPS', joins: 1 },
-  { key: 'protein', label: 'PROTEIN', joins: 3 },
-  { key: 'water', label: 'WATER', joins: 4 },
-  { key: 'mobility', label: 'MOBILITY', joins: 5 }
+  { key: 'water', label: 'WATER', joins: 3 },
+  { key: 'protein', label: 'PROTEIN', joins: 5 },
+  { key: 'mobility', label: 'MOBILITY', joins: 7 }
 ];
 const WEEKLY_CAPS = { recovery: 2, challengeSession: 1 };
 const $ = id => document.getElementById(id);
