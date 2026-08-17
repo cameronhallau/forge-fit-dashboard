@@ -5,7 +5,7 @@ const HABITS = [
   { key: 'steps', label: 'STEPS', joins: 1 },
   { key: 'protein', label: 'PROTEIN', joins: 3 },
   { key: 'water', label: 'WATER', joins: 4 },
-  { key: 'mobility', label: 'MOBILITY', joins: 5, weeklyCap: 1 }
+  { key: 'mobility', label: 'MOBILITY', joins: 5 }
 ];
 const WEEKLY_CAPS = { recovery: 2, challengeSession: 1 };
 const $ = id => document.getElementById(id);
@@ -214,13 +214,7 @@ function updateEntryHabitState(participant) {
       updateLogTile(habit.key, { available: true, state: 'early', note: `JOINS W${habit.joins}` });
       continue;
     }
-    if (habit.weeklyCap) {
-      const cap = weeklyCapState(participant, habit.key, entryDate, habit.weeklyCap);
-      const capped = !cap.available || (cap.completedToday && !cap.earnsPoint);
-      updateLogTile(habit.key, capped
-        ? { available: cap.completedToday, state: 'capped', note: `${cap.used}/${cap.cap} THIS WEEK` }
-        : { available: true });
-    } else updateLogTile(habit.key, { available: true });
+    updateLogTile(habit.key, { available: true });
   }
   $('habitStackNote').textContent = week ? `WEEK ${week}: ${active.join(' + ')} ALL NEED TO BE MET FOR THE DAILY HABIT POINT. YOU CAN LOG THE REST EARLY.` : 'LOG ANY HABIT NOW. DAILY HABIT POINTS BEGIN ON YOUR CHALLENGE START DATE.';
 }
