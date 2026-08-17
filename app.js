@@ -5,8 +5,9 @@ const HABITS = [
   { key: 'steps', label: 'STEPS', joins: 1 },
   { key: 'protein', label: 'PROTEIN', joins: 3 },
   { key: 'water', label: 'WATER', joins: 4 },
-  { key: 'mobility', label: 'MOBILITY', joins: 5 }
+  { key: 'mobility', label: 'MOBILITY', joins: 5, weeklyCap: 1 }
 ];
+const WEEKLY_CAPS = { recovery: 2, challengeSession: 1 };
 const $ = id => document.getElementById(id);
 const localKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 const todayKey = () => localKey(new Date());
@@ -80,13 +81,27 @@ function stackComplete(participant, date) {
   const active = habitsFor(participant, date).filter(habit => habit.active);
   return challengeWeek(participant, date) > 0 && active.length > 0 && active.every(habit => habit.done);
 }
+function weeklyCapState(participant, key, date, cap) {
+  const completedDates = weekKeys(date).filter(day => !!participant.days[day]?.[key]);
+  const completedToday = completedDates.includes(date);
+  const rank = completedDates.indexOf(date);
+  const completedElsewhere = completedDates.filter(day => day !== date).length;
+  return {
+    cap,
+    completedToday,
+    completedElsewhere,
+    used: Math.min(cap, completedDates.length),
+    // Keep an existing entry editable, even if a historical over-cap entry
+    // needs to be corrected. New over-cap entries cannot be selected.
+    available: completedToday || completedElsewhere < cap,
+    earnsPoint: completedToday && rank >= 0 && rank < cap
+  };
+}
 function recoveryPointsForDate(participant, date) {
-  const day = participant.days[date] || {};
-  const earlier = weekKeys(date).filter(key => key < date).reduce((sum, key) => sum + Number(!!participant.days[key]?.recovery), 0);
-  return day.recovery ? Math.min(1, Math.max(0, 2 - earlier)) : 0;
+  return Number(weeklyCapState(participant, 'recovery', date, WEEKLY_CAPS.recovery).earnsPoint);
 }
 function challengeSessionPointForDate(participant, date) {
-  return participant.days[date]?.challengeSession && !weekKeys(date).some(key => key < date && participant.days[key]?.challengeSession) ? 1 : 0;
+  return Number(weeklyCapState(participant, 'challengeSession', date, WEEKLY_CAPS.challengeSession).earnsPoint);
 }
 function relativeStrengthChange(participant) {
   const c = participant.challenge, weight = Number(c.bodyweight) || 0;
@@ -182,17 +197,59 @@ function showSetup() {
 function toggleSetupRun() { $('setupDistanceWrap').hidden = document.querySelector('[name="challengeType"]:checked')?.value !== 'run'; }
 function toggleCustomSession() { $('customSessionWrap').hidden = document.querySelector('[name="sessionDefinition"]:checked')?.value !== 'custom'; }
 
+function updateLogTile(key, { available, state = 'available', note = '' }) {
+  const input = $(`${key}Input`), label = input.closest('label'), card = input.nextElementSibling;
+  label.classList.toggle('available-to-log', state === 'available' && available);
+  label.classList.toggle('out-of-stack', state === 'early');
+  label.classList.toggle('cap-reached', state === 'capped');
+  card.dataset.statusNote = note;
+  input.disabled = !available && !input.checked;
+  label.setAttribute('aria-disabled', String(input.disabled));
+}
 function updateEntryHabitState(participant) {
   const week = challengeWeek(participant, entryDate), active = habitsFor(participant, entryDate).filter(habit => habit.active).map(habit => habit.label);
-  for (const habit of HABITS) { const label = $(`${habit.key}Input`).closest('label'), enabled = week >= habit.joins; label.classList.toggle('active-in-stack', enabled); label.classList.toggle('out-of-stack', !enabled); label.dataset.stackNote = enabled ? '' : `JOINS W${habit.joins}`; }
+  for (const habit of HABITS) {
+    const enabled = week >= habit.joins;
+    if (!enabled) {
+      updateLogTile(habit.key, { available: true, state: 'early', note: `JOINS W${habit.joins}` });
+      continue;
+    }
+    if (habit.weeklyCap) {
+      const cap = weeklyCapState(participant, habit.key, entryDate, habit.weeklyCap);
+      const capped = !cap.available || (cap.completedToday && !cap.earnsPoint);
+      updateLogTile(habit.key, capped
+        ? { available: cap.completedToday, state: 'capped', note: `${cap.used}/${cap.cap} THIS WEEK` }
+        : { available: true });
+    } else updateLogTile(habit.key, { available: true });
+  }
   $('habitStackNote').textContent = week ? `WEEK ${week}: ${active.join(' + ')} ALL NEED TO BE MET FOR THE DAILY HABIT POINT. YOU CAN LOG THE REST EARLY.` : 'LOG ANY HABIT NOW. DAILY HABIT POINTS BEGIN ON YOUR CHALLENGE START DATE.';
+}
+function updateEntryActivityState(participant) {
+  updateLogTile('gym', { available: true });
+  updateLogTile('run', { available: true });
+  for (const key of ['recovery', 'challengeSession']) {
+    const cap = weeklyCapState(participant, key, entryDate, WEEKLY_CAPS[key]);
+    const capped = !cap.available || (cap.completedToday && !cap.earnsPoint);
+    updateLogTile(key, capped
+      ? { available: cap.completedToday, state: 'capped', note: `${cap.used}/${cap.cap} THIS WEEK` }
+      : { available: true });
+  }
+  const recovery = weeklyCapState(participant, 'recovery', entryDate, WEEKLY_CAPS.recovery);
+  const session = weeklyCapState(participant, 'challengeSession', entryDate, WEEKLY_CAPS.challengeSession);
+  $('recoveryEntryLabel').textContent = recovery.available ? `DONE · ${recovery.used}/${recovery.cap} THIS WEEK` : `CAP REACHED · ${recovery.used}/${recovery.cap}`;
+  $('challengeSessionEntryLabel').textContent = session.available ? `DONE · ${definitionLabel(participant)} · ${session.used}/${session.cap} THIS WEEK` : `CAP REACHED · ${session.used}/${session.cap}`;
+  const recoveryCapped = !recovery.available || (recovery.completedToday && !recovery.earnsPoint);
+  const sessionCapped = !session.available || (session.completedToday && !session.earnsPoint);
+  $('activityCapNote').textContent = (!recoveryCapped && !sessionCapped)
+    ? 'LIME OUTLINES CAN STILL EARN POINTS. WEEKLY CAPS LOCK ONCE COMPLETE.'
+    : 'GRAY CARDS HAVE REACHED THEIR WEEKLY CAP AND DO NOT EARN MORE POINTS.';
 }
 function loadEntry() {
   const p = person(), day = p.days[entryDate] || {};
   $('entryPerson').textContent = p.name.toUpperCase(); $('entryDate').value = entryDate;
   DAY_FIELDS.forEach(key => { $(`${key}Input`).checked = !!day[key]; });
-  $('challengeSessionEntryLabel').textContent = `DONE · ${definitionLabel(p)} · MAX 1/WK`;
   updateEntryHabitState(p);
+  updateEntryActivityState(p);
 }
 function parsePace(value) { const match = String(value || '').trim().match(/^(\d{1,2}):([0-5]\d)$/); return match ? Number(match[1]) * 60 + Number(match[2]) : 0; }
 function formatPace(value) { const seconds = Number(value) || 0; return seconds ? `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}` : ''; }
