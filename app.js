@@ -46,6 +46,9 @@ function normalize(raw = {}) {
 }
 function person() { return activeId ? state.participants[activeId] : null; }
 function validId(id) { return PARTICIPANTS.some(([candidate]) => candidate === id); }
+function hasLogForDate(participant, date = todayKey()) {
+  return DAY_FIELDS.some(key => !!participant?.days?.[date]?.[key]);
+}
 
 async function loadState() {
   try {
@@ -181,7 +184,10 @@ function setView(id, scroll = true) {
 function showLanding() { activeId = null; setView('landing', false); }
 function selectPlayer(id) {
   activeId = id;
-  if (person().setupComplete) { renderDashboard(); setView('dashboard'); }
+  if (person().setupComplete) {
+    renderDashboard();
+    setView(hasLogForDate(person()) ? 'dashboard' : 'update');
+  }
   else showSetup();
 }
 function showSetup() {
@@ -216,7 +222,7 @@ function updateEntryHabitState(participant) {
     }
     updateLogTile(habit.key, { available: true });
   }
-  $('habitStackNote').textContent = week ? `WEEK ${week}: ${active.join(' + ')} ALL NEED TO BE MET FOR THE DAILY HABIT POINT. YOU CAN LOG THE REST EARLY.` : 'LOG ANY HABIT NOW. DAILY HABIT POINTS BEGIN ON YOUR CHALLENGE START DATE.';
+  $('habitStackNote').textContent = week ? `WEEK ${week}: ${active.join(' + ')} ALL NEED TO BE MET FOR THE DAILY HABIT POINT.` : 'LOG ANY HABIT NOW. DAILY HABIT POINTS BEGIN ON YOUR CHALLENGE START DATE.';
 }
 function updateEntryActivityState(participant) {
   updateLogTile('gym', { available: true });
@@ -268,13 +274,13 @@ async function submitSetup(event) {
   selected.sessionDefinition = { mode, custom: $('customSessionInput').value.trim() };
   const shared = await savePerson();
   if (!shared) { state = previous; return toast('CENTRAL SAVE FAILED — TRY AGAIN'); }
-  toast('CHALLENGE SET'); renderDashboard(); setView('dashboard');
+  toast('CHALLENGE SET'); renderDashboard(); setView('update');
 }
 async function submitEntry(event) {
   event.preventDefault(); const previous = structuredClone(state), p = person(); p.days[entryDate] = Object.fromEntries(DAY_FIELDS.map(key => [key, $(`${key}Input`).checked]));
   const shared = await savePerson();
   if (!shared) { state = previous; loadEntry(); return toast('CENTRAL SAVE FAILED — TRY AGAIN'); }
-  toast(`${entryDate} SAVED`); renderDashboard(); loadEntry();
+  toast(`${entryDate} SAVED`); renderDashboard(); setView('dashboard');
 }
 async function submitBaseline(event) {
   event.preventDefault(); const p = person(), c = p.challenge, week = challengeWeek(p), retest = baselineMode !== 'edit' && week >= 8;

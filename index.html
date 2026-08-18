@@ -63,10 +63,10 @@
       <header class="page-head"><button class="back" type="button" data-view="dashboard">← DASHBOARD</button><p>LOG ACTIVITY / <span id="entryPerson">—</span></p></header>
       <section class="date-editor" aria-label="Entry date"><button id="datePrev" type="button" aria-label="Previous day">←</button><label><span>DATE</span><input id="entryDate" type="date"></label><button id="dateNext" type="button" aria-label="Next day">→</button><button id="dateToday" type="button">TODAY</button></section>
       <form id="entryForm">
-        <section class="entry-group"><div class="section-head"><b>DAILY HABITS</b><span>ONE TAP</span></div><div class="toggle-grid habits">
+        <section class="entry-group"><div class="section-head"><b>DAILY HABITS</b></div><div class="toggle-grid habits">
           <label><input id="stepsInput" type="checkbox"><span><b>STEPS</b><small>10K MET</small><i>✓</i></span></label><label><input id="proteinInput" type="checkbox"><span><b>PROTEIN GOAL</b><small>MET</small><i>✓</i></span></label><label><input id="waterInput" type="checkbox"><span><b>WATER</b><small>2L MET</small><i>✓</i></span></label><label><input id="mobilityInput" type="checkbox"><span><b>MOBILITY</b><small>10 MINUTES</small><i>✓</i></span></label>
         </div><p id="habitStackNote" class="stack-note"></p></section>
-        <section class="entry-group"><div class="section-head"><b>ACTIVITY</b><span>ONE TAP</span></div><div class="toggle-grid sessions">
+        <section class="entry-group"><div class="section-head"><b>ACTIVITY</b></div><div class="toggle-grid sessions">
           <label><input id="runInput" type="checkbox"><span><b>RUN</b><small>DONE</small><i>✓</i></span></label><label><input id="gymInput" type="checkbox"><span><b>CLASS / GYM</b><small>DONE</small><i>✓</i></span></label><label><input id="recoveryInput" type="checkbox"><span><b>RECOVERY</b><small id="recoveryEntryLabel">DONE · MAX 2/WK</small><i>✓</i></span></label><label><input id="challengeSessionInput" type="checkbox"><span><b>CHALLENGE SESSION</b><small id="challengeSessionEntryLabel">DONE · MAX 1/WK</small><i>✓</i></span></label>
         </div><p id="activityCapNote" class="stack-note cap-note"></p></section>
         <button class="primary-button save-button" type="submit">SAVE DAY <span>→</span></button>
@@ -94,6 +94,6 @@
     </section>
   </main>
   <nav class="bottom-nav" aria-label="Primary navigation"><button class="nav-item" type="button" data-view="dashboard"><span>▦</span>DASHBOARD</button><button class="nav-item" type="button" data-view="update"><span>＋</span>LOG</button></nav>
-  <div id="toast" role="status"></div><script src="app.js?v=20260818-corrected-stack"></script>
+  <div id="toast" role="status"></div><script src="app.js?v=20260818-log-routing"></script>
 </body>
 </html>
