@@ -206,7 +206,7 @@ function updateLogTile(key, { available, state = 'available', note = '' }) {
   label.classList.toggle('available-to-log', state === 'available' && available);
   label.classList.toggle('out-of-stack', state === 'early');
   label.classList.toggle('cap-reached', state === 'capped');
-  card.dataset.statusNote = note;
+  card.querySelector('small').dataset.statusNote = note;
   input.disabled = !available && !input.checked;
   label.setAttribute('aria-disabled', String(input.disabled));
 }
