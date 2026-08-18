@@ -234,8 +234,8 @@ function updateEntryActivityState(participant) {
   }
   const recovery = weeklyCapState(participant, 'recovery', entryDate, WEEKLY_CAPS.recovery);
   const session = weeklyCapState(participant, 'challengeSession', entryDate, WEEKLY_CAPS.challengeSession);
-  $('recoveryEntryLabel').textContent = recovery.available ? `TAP TO LOG · ${recovery.used}/${recovery.cap} THIS WEEK` : `CAP REACHED · ${recovery.used}/${recovery.cap}`;
-  $('challengeSessionEntryLabel').textContent = session.available ? `TAP TO LOG · ${definitionLabel(participant)} · ${session.used}/${session.cap} THIS WEEK` : `CAP REACHED · ${session.used}/${session.cap}`;
+  $('recoveryEntryLabel').textContent = recovery.available ? `${recovery.used}/${recovery.cap} THIS WEEK` : `CAP REACHED · ${recovery.used}/${recovery.cap}`;
+  $('challengeSessionEntryLabel').textContent = session.available ? `${definitionLabel(participant)} · ${session.used}/${session.cap} THIS WEEK` : `CAP REACHED · ${session.used}/${session.cap}`;
   const recoveryCapped = !recovery.available || (recovery.completedToday && !recovery.earnsPoint);
   const sessionCapped = !session.available || (session.completedToday && !session.earnsPoint);
   $('activityCapNote').textContent = (!recoveryCapped && !sessionCapped)
