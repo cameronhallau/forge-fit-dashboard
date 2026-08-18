@@ -175,8 +175,6 @@ function renderLeaderboard() {
 
 function setView(id, scroll = true) {
   document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === id));
-  const chooser = id === 'landing' || id === 'setup' || id === 'rules';
-  document.querySelector('.bottom-nav').hidden = chooser;
   document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === id));
   if (id === 'update') loadEntry(); if (id === 'baseline') loadBaseline();
   if (scroll) scrollTo({ top: 0, behavior: 'smooth' });
@@ -276,11 +274,18 @@ async function submitSetup(event) {
   if (!shared) { state = previous; return toast('CENTRAL SAVE FAILED — TRY AGAIN'); }
   toast('CHALLENGE SET'); renderDashboard(); setView('update');
 }
-async function submitEntry(event) {
-  event.preventDefault(); const previous = structuredClone(state), p = person(); p.days[entryDate] = Object.fromEntries(DAY_FIELDS.map(key => [key, $(`${key}Input`).checked]));
+async function saveCurrentEntry() {
+  const previous = structuredClone(state), p = person(); p.days[entryDate] = Object.fromEntries(DAY_FIELDS.map(key => [key, $(`${key}Input`).checked]));
   const shared = await savePerson();
   if (!shared) { state = previous; loadEntry(); return toast('CENTRAL SAVE FAILED — TRY AGAIN'); }
   toast(`${entryDate} SAVED`); renderDashboard(); setView('dashboard');
+}
+async function submitEntry(event) { event.preventDefault(); await saveCurrentEntry(); }
+function currentLogHasTicks() { return DAY_FIELDS.some(key => $(`${key}Input`).checked); }
+function closeSavePrompt() { $('savePrompt').hidden = true; }
+function returnToDashboard() {
+  if (currentLogHasTicks()) { $('savePrompt').hidden = false; return; }
+  renderDashboard(); setView('dashboard');
 }
 async function submitBaseline(event) {
   event.preventDefault(); const p = person(), c = p.challenge, week = challengeWeek(p), retest = baselineMode !== 'edit' && week >= 8;
@@ -307,5 +312,8 @@ $('leaderWeek').onclick = () => { leaderboardPeriod = 'week'; renderLeaderboard(
 $('switchPlayer').onclick = showLanding; $('baselineButton').onclick = () => { baselineMode = 'auto'; setView('baseline'); }; $('editBaseline').onclick = () => { baselineMode = 'edit'; setView('baseline'); }; $('myProfile').onclick = showSetup;
 $('datePrev').onclick = () => { entryDate = addDays(entryDate, -1); loadEntry(); }; $('dateNext').onclick = () => { entryDate = addDays(entryDate, 1); loadEntry(); }; $('dateToday').onclick = () => { entryDate = todayKey(); loadEntry(); }; $('entryDate').onchange = event => { entryDate = event.target.value; loadEntry(); };
 $('setupForm').onsubmit = submitSetup; $('entryForm').onsubmit = submitEntry; $('baselineForm').onsubmit = submitBaseline;
+$('returnDashboard').onclick = returnToDashboard;
+$('discardLog').onclick = () => { closeSavePrompt(); renderDashboard(); setView('dashboard'); };
+$('saveLog').onclick = async () => { closeSavePrompt(); await saveCurrentEntry(); };
 document.querySelectorAll('[name="challengeType"]').forEach(input => { input.onchange = toggleSetupRun; }); document.querySelectorAll('[name="sessionDefinition"]').forEach(input => { input.onchange = toggleCustomSession; });
 loadState();

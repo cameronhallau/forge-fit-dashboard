@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818-corrected-stack" />
+  <link rel="stylesheet" href="styles.css?v=20260818-return-dashboard" />
 </head>
 <body>
   <main class="shell">
@@ -60,7 +60,7 @@
     </section>
 
     <section id="update" class="view">
-      <header class="page-head"><button class="back" type="button" data-view="dashboard">← DASHBOARD</button><p>LOG ACTIVITY / <span id="entryPerson">—</span></p></header>
+      <header class="page-head"><button id="returnDashboard" class="back" type="button">← RETURN TO DASHBOARD</button><p>LOG ACTIVITY / <span id="entryPerson">—</span></p></header>
       <section class="date-editor" aria-label="Entry date"><button id="datePrev" type="button" aria-label="Previous day">←</button><label><span>DATE</span><input id="entryDate" type="date"></label><button id="dateNext" type="button" aria-label="Next day">→</button><button id="dateToday" type="button">TODAY</button></section>
       <form id="entryForm">
         <section class="entry-group"><div class="section-head"><b>DAILY HABITS</b></div><div class="toggle-grid habits">
@@ -93,7 +93,7 @@
       </form>
     </section>
   </main>
-  <nav class="bottom-nav" aria-label="Primary navigation"><button class="nav-item" type="button" data-view="dashboard"><span>▦</span>DASHBOARD</button><button class="nav-item" type="button" data-view="update"><span>＋</span>LOG</button></nav>
-  <div id="toast" role="status"></div><script src="app.js?v=20260818-log-routing"></script>
+  <div id="savePrompt" class="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="savePromptTitle" hidden><section class="confirm-panel"><p>UNSAVED LOG</p><h2 id="savePromptTitle">DID YOU WANT<br>TO SAVE THE LOG?</h2><div class="confirm-actions"><button id="discardLog" type="button">NO</button><button id="saveLog" type="button">YES, SAVE <span>→</span></button></div></section></div>
+  <div id="toast" role="status"></div><script src="app.js?v=20260818-return-dashboard"></script>
 </body>
 </html>
