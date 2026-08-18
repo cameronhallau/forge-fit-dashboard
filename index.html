@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260818-compact-log" />
+  <link rel="stylesheet" href="styles.css?v=20260818-condensed-log" />
 </head>
 <body>
   <main class="shell">
@@ -61,7 +61,7 @@
 
     <section id="update" class="view">
       <header class="page-head"><button id="returnDashboard" class="back return-dashboard" type="button">← RETURN TO DASHBOARD</button><p>LOG ACTIVITY / <span id="entryPerson">—</span></p></header>
-      <section class="date-editor" aria-label="Entry date"><button id="datePrev" type="button" aria-label="Previous day">←</button><label><span>DATE</span><input id="entryDate" type="date"></label><button id="dateNext" type="button" aria-label="Next day">→</button><button id="dateToday" type="button">TODAY</button></section>
+      <section class="date-editor" aria-label="Entry date"><button id="datePrev" class="date-step" type="button" aria-label="Previous day">&lt;</button><label><span>DATE</span><input id="entryDate" type="date"></label><button id="dateNext" class="date-step" type="button" aria-label="Next day">&gt;</button><button id="dateToday" type="button">TODAY</button></section>
       <form id="entryForm">
         <section class="entry-group"><div class="section-head"><b>DAILY HABITS</b></div><div class="toggle-grid habits">
           <label><input id="stepsInput" type="checkbox"><span><b>STEPS</b><small>10K MET</small><i>✓</i></span></label><label><input id="proteinInput" type="checkbox"><span><b>PROTEIN</b><small>MET</small><i>✓</i></span></label><label><input id="waterInput" type="checkbox"><span><b>WATER</b><small>2L MET</small><i>✓</i></span></label><label><input id="mobilityInput" type="checkbox"><span><b>MOBILITY</b><small>10 MINUTES</small><i>✓</i></span></label>
