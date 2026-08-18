@@ -64,10 +64,10 @@
       <section class="date-editor" aria-label="Entry date"><button id="datePrev" class="date-step" type="button" aria-label="Previous day">&lt;</button><label><span>DATE</span><input id="entryDate" type="date"></label><button id="dateNext" class="date-step" type="button" aria-label="Next day">&gt;</button><button id="dateToday" type="button">TODAY</button></section>
       <form id="entryForm">
         <section class="entry-group"><div class="section-head"><b>DAILY HABITS</b></div><div class="toggle-grid habits">
-          <label><input id="stepsInput" type="checkbox"><span><b>STEPS</b><small>10K MET</small><i>✓</i></span></label><label><input id="proteinInput" type="checkbox"><span><b>PROTEIN</b><small>MET</small><i>✓</i></span></label><label><input id="waterInput" type="checkbox"><span><b>WATER</b><small>2L MET</small><i>✓</i></span></label><label><input id="mobilityInput" type="checkbox"><span><b>MOBILITY</b><small>10 MINUTES</small><i>✓</i></span></label>
+          <label><input id="stepsInput" type="checkbox"><span><b>STEPS</b><small>TAP AT 10K</small><i>✓</i></span></label><label><input id="proteinInput" type="checkbox"><span><b>PROTEIN</b><small>TAP AT 120G</small><i>✓</i></span></label><label><input id="waterInput" type="checkbox"><span><b>WATER</b><small>TAP AT 2L</small><i>✓</i></span></label><label><input id="mobilityInput" type="checkbox"><span><b>MOBILITY</b><small>TAP TO LOG</small><i>✓</i></span></label>
         </div><p id="habitStackNote" class="stack-note"></p></section>
         <section class="entry-group"><div class="section-head"><b>ACTIVITY</b></div><div class="toggle-grid sessions">
-          <label><input id="runInput" type="checkbox"><span><b>RUN</b><small>DONE</small><i>✓</i></span></label><label><input id="gymInput" type="checkbox"><span><b>CLASS / GYM</b><small>DONE</small><i>✓</i></span></label><label><input id="recoveryInput" type="checkbox"><span><b>RECOVERY</b><small id="recoveryEntryLabel">DONE · MAX 2/WK</small><i>✓</i></span></label><label><input id="challengeSessionInput" type="checkbox"><span><b>CHALLENGE SESSION</b><small id="challengeSessionEntryLabel">DONE · MAX 1/WK</small><i>✓</i></span></label>
+          <label><input id="runInput" type="checkbox"><span><b>RUN</b><small>TAP TO LOG</small><i>✓</i></span></label><label><input id="gymInput" type="checkbox"><span><b>CLASS / GYM</b><small>TAP TO LOG</small><i>✓</i></span></label><label><input id="recoveryInput" type="checkbox"><span><b>RECOVERY</b><small id="recoveryEntryLabel">TAP TO LOG · MAX 2/WK</small><i>✓</i></span></label><label><input id="challengeSessionInput" type="checkbox"><span><b>CHALLENGE SESSION</b><small id="challengeSessionEntryLabel">TAP TO LOG · MAX 1/WK</small><i>✓</i></span></label>
         </div><p id="activityCapNote" class="stack-note cap-note"></p></section>
         <button class="primary-button save-button" type="submit">SAVE DAY <span>→</span></button>
       </form>
@@ -94,6 +94,6 @@
     </section>
   </main>
   <div id="savePrompt" class="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="savePromptTitle" hidden><section class="confirm-panel"><p>UNSAVED LOG</p><h2 id="savePromptTitle">DID YOU WANT<br>TO SAVE THE LOG?</h2><div class="confirm-actions"><button id="discardLog" type="button">NO</button><button id="saveLog" type="button">YES, SAVE <span>→</span></button></div></section></div>
-  <div id="toast" role="status"></div><script src="app.js?v=20260818-compact-log"></script>
+  <div id="toast" role="status"></div><script src="app.js?v=20260818-action-labels"></script>
 </body>
 </html>
